@@ -2,7 +2,7 @@ class ProductsController < ApplicationController
     before_action :set_products, only: :index
 
   # GET /products
-  def index    
+  def index
     json_response(@products)    
   end
 
@@ -21,10 +21,15 @@ class ProductsController < ApplicationController
     end
 
     def set_products
-      if params[:q]
-        partial_1 = Product.where('product.name LIKE :q', q: "%#{params[:q]}%")
-        partial_2 = Product.where(category: Category.where('category.name LIKE :q', q: "%#{params[:q]}%"))
-        @products = partial_1.or(partial_2).limit(limit).offset(params[:offset])
+      if params[:q].present?
+        queries = params[:q].split(' ')
+        partials = queries.map do |q|
+          Product.where('product.name LIKE :q', q: "%#{q}%").or(
+            Product.where(category: Category.where('category.name LIKE :q', q: "%#{q}%")))
+            .limit(limit).offset(params[:offset])
+        end
+        
+        @products = partials.reduce(:or)
       else
         @products = Product.limit(limit).offset(params[:offset])
       end
