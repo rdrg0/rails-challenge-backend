@@ -31,7 +31,7 @@ class ProductsController < ApplicationController
         
         @products = partials.reduce(:or)
       else
-        @products = Product.limit(limit).offset(params[:offset])
+        @products = Product.order(:name).page params[:page]
       end
     end
 end
