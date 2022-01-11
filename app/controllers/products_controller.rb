@@ -3,7 +3,11 @@ class ProductsController < ApplicationController
 
   # GET /products
   def index
-    json_response(@products)    
+    json_response({info:{count: @products.total_count,
+                         pages: @products.total_pages,
+                         prev: @products.prev_page,
+                         next: @products.next_page},
+                   results: @products})
   end
 
   # GET /products/1
@@ -12,26 +16,24 @@ class ProductsController < ApplicationController
     json_response(@product)
   end
 
-  private
-    
-    MAX_LIMIT = 50
+  private    
 
-    def limit
-      [params.fetch(:limit, MAX_LIMIT).to_i, MAX_LIMIT].min
-    end
+    # def page_url(page_number)
+    #   return nil unless page_number
+    #   request.original_url.split("&page=#{params[:page]}").join('') + "&page=#{page_number.to_s}"
+    # end
 
     def set_products
       if params[:q].present?
         queries = params[:q].split(' ')
         partials = queries.map do |q|
           Product.where('product.name LIKE :q', q: "%#{q}%").or(
-            Product.where(category: Category.where('category.name LIKE :q', q: "%#{q}%")))
-            .limit(limit).offset(params[:offset])
+            Product.where(category: Category.where('category.name LIKE :q', q: "%#{q}%")))            
         end
         
-        @products = partials.reduce(:or)
+        @products = partials.reduce(:or).page(params[:page]).per(params[:per_page])
       else
-        @products = Product.order(:name).page params[:page]
+        @products = Product.order(:name).page(params[:page]).per(params[:per_page])
       end
     end
 end
