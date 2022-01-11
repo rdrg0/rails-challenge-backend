@@ -1,8 +1,8 @@
-Rails.application.routes.draw do
+# frozen_string_literal: true
 
-  resources :products, :categories, only: [:index, :show]
-  
-  
+Rails.application.routes.draw do
+  resources :products, :categories, only: %i[index show]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

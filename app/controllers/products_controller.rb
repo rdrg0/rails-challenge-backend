@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 class ProductsController < ApplicationController
-    before_action :set_products, only: :index
+  before_action :set_products, only: :index
 
   # GET /products
   def index
-    json_response({info:{count: @products.total_count,
-                         pages: @products.total_pages,
-                         prev: page_url(@products.prev_page),
-                         next: page_url(@products.next_page)},
-                   results: @products})
+    json_response({ info: { count: @products.total_count,
+                            pages: @products.total_pages,
+                            prev: page_url(@products.prev_page),
+                            next: page_url(@products.next_page) },
+                    results: @products })
   end
 
   # GET /products/1
@@ -16,21 +18,22 @@ class ProductsController < ApplicationController
     json_response(@product)
   end
 
-  private    
-
+  private
     def page_url(page_number)
       return nil unless page_number
-      request.base_url + request.path + "?q=#{params[:q]}&page=#{page_number.to_s}&per_page=#{params[:per_page]}"
+
+      request.base_url + request.path + "?q=#{params[:q]}&page=#{page_number}&per_page=#{params[:per_page]}"
     end
 
     def set_products
       if params[:q].present?
-        queries = params[:q].split(' ')
+        queries = params[:q].split(" ")
         partials = queries.map do |q|
-          Product.where('product.name LIKE :q', q: "%#{q}%").or(
-            Product.where(category: Category.where('category.name LIKE :q', q: "%#{q}%")))            
+          Product.where("product.name LIKE :q", q: "%#{q}%").or(
+            Product.where(category: Category.where("category.name LIKE :q", q: "%#{q}%"))
+          )
         end
-        
+
         @products = partials.reduce(:or).page(params[:page]).per(params[:per_page])
       else
         @products = Product.order(:name).page(params[:page]).per(params[:per_page])
