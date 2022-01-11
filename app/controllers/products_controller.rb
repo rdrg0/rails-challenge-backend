@@ -5,8 +5,8 @@ class ProductsController < ApplicationController
   def index
     json_response({info:{count: @products.total_count,
                          pages: @products.total_pages,
-                         prev: @products.prev_page,
-                         next: @products.next_page},
+                         prev: page_url(@products.prev_page),
+                         next: page_url(@products.next_page)},
                    results: @products})
   end
 
@@ -18,10 +18,10 @@ class ProductsController < ApplicationController
 
   private    
 
-    # def page_url(page_number)
-    #   return nil unless page_number
-    #   request.original_url.split("&page=#{params[:page]}").join('') + "&page=#{page_number.to_s}"
-    # end
+    def page_url(page_number)
+      return nil unless page_number
+      request.base_url + request.path + "?q=#{params[:q]}&page=#{page_number.to_s}&per_page=#{params[:per_page]}"
+    end
 
     def set_products
       if params[:q].present?
