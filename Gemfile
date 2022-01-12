@@ -5,6 +5,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "dotenv-rails", groups: %i[development test]
 
+gem "rack-cors"
+
 gem "rubocop-performance", require: false
 
 gem "rubocop-rails", require: false
