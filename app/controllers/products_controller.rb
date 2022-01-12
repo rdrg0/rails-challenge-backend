@@ -36,7 +36,7 @@ class ProductsController < ApplicationController
 
         @products = partials.reduce(:or).page(params[:page]).per(params[:per_page])
       else
-        @products = Product.order(:name).page(params[:page]).per(params[:per_page])
+        @products = Product.order(:id).page(params[:page]).per(params[:per_page])
       end
     end
 end
