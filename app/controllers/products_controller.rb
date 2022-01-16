@@ -27,16 +27,19 @@ class ProductsController < ApplicationController
 
     def set_products
       if params[:q].present?
-        queries = params[:q].split(" ")
-        partials = queries.map do |q|
-          Product.where("product.name LIKE :q", q: "%#{q}%").or(
-            Product.where(category: Category.where("category.name LIKE :q", q: "%#{q}%"))
-          )
-        end
-
-        @products = partials.reduce(:or).page(params[:page]).per(params[:per_page])
+        @products = search_results
       else
         @products = Product.page(params[:page]).per(params[:per_page])
       end
+    end
+
+    def search_results
+      queries = params[:q].split(" ")
+      partials = queries.map do |q|
+        Product.where("product.name LIKE :q", q: "%#{q}%").or(
+          Product.where(category: Category.where("category.name LIKE :q", q: "%#{q}%"))
+        )
+      end
+      partials.reduce(:or).page(params[:page]).per(params[:per_page])
     end
 end

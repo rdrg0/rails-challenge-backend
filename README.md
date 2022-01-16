@@ -1,9 +1,106 @@
-# Bsale Challenge
+# Bsale Challenge - Backend
 
-Ruby on Rails server side application that consumes a MySQL database and responds through a REST api
-## API
-#### Base url: https://bsale-test-rdrg0.herokuapp.com
+## Challenge Overview
 
+The challenge requires the implementation of a server and a client side app for an online store. The frontend and the backend apps communicate through a REST API. An existing MySQL database is provided wich comprises products and categories. Additionally, 
+
+## Server side application
+
+The server side application is a RESTful JSON API  and it was implemented using Ruby on Rails.
+
+### Models
+The app has two models Product and Category.
+Product and Category models were created by linking the corresponding database tables and follow this ERD diagram:
+
+
+<br />
+
+![alt text](./erd.jpeg)
+
+
+<br />
+
+### Controllers and Routes
+
+| Verb 	| URI pattern       	| Controller#Action 	|
+|------	|-------------------	|-------------------	|
+| GET  	| "/"               	| application#root  	|
+| GET  	| "/products"       	| products#index    	|
+| GET  	| "/products/:id"   	| products#show     	|
+| GET  	| "/categories"     	| categories#index  	|
+| GET  	| "/categories/:id" 	| categories#show   	|
+
+### Concerns
+
+1. Exception Handler:\
+A module that rescues ActiveRecord::RecordNotFound and ActiveRecord::RecordInvalid where it is included by using the included
+method from ActiveSupport::Concern. It sends a json response with the error message and the response code.
+
+```shell
+  module ExceptionHandler
+    extend ActiveSupport::Concern
+
+    included do
+      rescue_from ActiveRecord::RecordNotFound do |e|
+        json_response({ message: e.message }, :not_found)
+      end
+
+      rescue_from ActiveRecord::RecordInvalid do |e|
+        json_response({ message: e.message }, :unprocessable_entity)
+      end
+    end
+  end
+```
+
+2. Response:\
+A module that provides the method json_response that takes an object and a status code for arguments and renders the object as json with the status code provided.
+```shell
+  module Response
+    def json_response(object, status = :ok)
+      render json: object, status: status
+    end
+  end
+```
+### Search
+Products search is executed by the `search_results` private method inside the products controller. It parses the user query, takes every word and retrieves the products with a matching name or category.
+
+```shell
+  def search_results
+    queries = params[:q].split(" ")
+    partials = queries.map do |q|
+      Product.where("product.name LIKE :q", q: "%#{q}%").or(
+        Product.where(category: Category.where("category.name LIKE :q", q: "%#{q}%"))
+      )
+    end
+    partials.reduce(:or).page(params[:page]).per(params[:per_page])
+  end
+```
+
+### Pagination
+The gem ``kaminari` was used for pagination.
+Usage: https://github.com/kaminari/kaminari
+
+
+### Countermeasures against SQL injections
+Rails security guide (https://guides.rubyonrails.org/security.html#sql-injection) was followed in order to prevent SQL injections.
+Parameters were never passed directly as SQL queries. User input was passed as named parameters or ActiveRecord methods that escape or sanitize user input like Model.find(:id) were used which is what the guide recommends.
+
+
+
+
+
+
+## API Documentation
+
+## Base URL
+```shell
+GET https://bsale-test-rdrg0.herokuapp.com
+
+{
+  "products": "https://bsale-test-rdrg0.herokuapp.com/products",
+  "categories": "https://bsale-test-rdrg0.herokuapp.com/categories"
+}
+```
 
 ## Products
 ### Index
