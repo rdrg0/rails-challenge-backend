@@ -9,9 +9,7 @@ class CategoriesController < ApplicationController
 
   # GET /categories/1
   def show
-    @products = Product.where(category: params[:id]) 
+    @products = Product.where(category: params[:id])
     json_response(@products)
   end
- 
-    
 end

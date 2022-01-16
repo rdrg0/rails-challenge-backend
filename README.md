@@ -86,9 +86,32 @@ Rails security guide (https://guides.rubyonrails.org/security.html#sql-injection
 Parameters were never passed directly as SQL queries. User input was passed as named parameters or ActiveRecord methods that escape or sanitize user input like Model.find(:id) as the guide recommends.
 
 
+## Development
 
+To get the Rails server running locally:
 
+Clone this repo
+bundle install to install all req'd dependencies
+configure database credentials in a .env file:
 
+```shell
+DB_HOST=****
+DB_USERNAME=****
+DB_PASSWORD=****
+DB_NAME=****
+```
+rails s to start the local server
+
+## Dependencies
+
+- kaminari - for pagination
+- dotenv-rails - to load environment variables
+- rubocop - for linting and code formatting
+- rack-cors - for cors policy config
+
+## Production
+
+This project was deployed with Heroku. View here: https://bsale-test-rdrg0.herokuapp.com
 
 ## API Documentation
 

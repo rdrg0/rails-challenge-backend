@@ -2,7 +2,7 @@
 
 module ExceptionHandler
   extend ActiveSupport::Concern
-  
+
   included do
     # Rescues RecordNotFound and sends a json response with 404
     rescue_from ActiveRecord::RecordNotFound do |e|
