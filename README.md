@@ -2,7 +2,7 @@
 
 ## Challenge Overview
 
-The challenge requires the implementation of a server and a client side app for an online store. The frontend and the backend apps communicate through a REST API. An existing MySQL database is provided wich comprises products and categories. Additionally, 
+The challenge requires the implementation of a server and a client side app for an online store. The frontend and the backend apps communicate through a REST API. An existing MySQL database is provided wich comprises products and categories. Additionally, search logic must be implemented serverside.
 
 ## Server side application
 
@@ -77,13 +77,13 @@ Products search is executed by the `search_results` private method inside the pr
 ```
 
 ### Pagination
-The gem ``kaminari` was used for pagination.
+The gem `kaminari` was used for pagination.
 Usage: https://github.com/kaminari/kaminari
 
 
 ### Countermeasures against SQL injections
 Rails security guide (https://guides.rubyonrails.org/security.html#sql-injection) was followed in order to prevent SQL injections.
-Parameters were never passed directly as SQL queries. User input was passed as named parameters or ActiveRecord methods that escape or sanitize user input like Model.find(:id) were used which is what the guide recommends.
+Parameters were never passed directly as SQL queries. User input was passed as named parameters or ActiveRecord methods that escape or sanitize user input like Model.find(:id) as the guide recommends.
 
 
 

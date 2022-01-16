@@ -19,12 +19,14 @@ class ProductsController < ApplicationController
   end
 
   private
+    # Returns the url of the arguments page number for the current query and per_page params.
     def page_url(page_number)
       return nil unless page_number
 
       request.base_url + request.path + "?q=#{params[:q]}&page=#{page_number}&per_page=#{params[:per_page]}"
     end
 
+    # Returns all products or the products that match the query if there is one.
     def set_products
       if params[:q].present?
         @products = search_results
@@ -33,6 +35,7 @@ class ProductsController < ApplicationController
       end
     end
 
+    # Parses the user query, takes every word and retrieves the products with a matching name or category.
     def search_results
       queries = params[:q].split(" ")
       partials = queries.map do |q|

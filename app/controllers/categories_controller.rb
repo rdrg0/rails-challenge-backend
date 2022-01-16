@@ -7,6 +7,7 @@ class CategoriesController < ApplicationController
     json_response(@categories)
   end
 
+  # GET /categories/1
   def show
     @products = Product.where(category: params[:id]) 
     json_response(@products)
