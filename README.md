@@ -36,7 +36,7 @@ Product and Category models were created by linking the corresponding database t
 A module that rescues ActiveRecord::RecordNotFound and ActiveRecord::RecordInvalid where it is included by using the included
 method from ActiveSupport::Concern. It sends a json response with the error message and the response code.
 
-```shell
+```ruby
   module ExceptionHandler
     extend ActiveSupport::Concern
 
@@ -54,7 +54,7 @@ method from ActiveSupport::Concern. It sends a json response with the error mess
 
 2. Response:\
 A module that provides the method json_response that takes an object and a status code for arguments and renders the object as json with the status code provided.
-```shell
+```ruby
   module Response
     def json_response(object, status = :ok)
       render json: object, status: status
@@ -64,7 +64,7 @@ A module that provides the method json_response that takes an object and a statu
 ### Search
 Products search is executed by the `search_results` private method inside the products controller. It parses the user query, takes every word and retrieves the products with a matching name or category.
 
-```shell
+```ruby
   def search_results
     queries = params[:q].split(" ")
     partials = queries.map do |q|
